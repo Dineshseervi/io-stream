@@ -1,0 +1,23 @@
+
+Reading Files via Java IO
+If you need to read a file from one end to the other you can use a FileInputStream or a FileReader depending on whether you want to read the file as binary or textual data. These two classes lets you read a file one byte or character at a time from the start to the end of the file, or read the bytes into an array of byte or char, again from start towards the end of the file. You don't have to read the whole file, but you can only read bytes and chars in the sequence they are stored in the file.
+
+If you need to jump around the file and read only parts of it from here and there, you can use a RandomAccessFile.
+
+---------
+Buffering can also be applied to OutputStream's thereby batching the writes to disk (or the underlying stream) up in larger chunks. That provides faster output too. This is done with a BufferedOutputStream.
+
+Buffering is just one of the effects you can achieve by combining streams.
+You can also wrap your InputStream in a PushbackStream.
+That way you can push data back into the stream to be re-read later. This is sometimes handy during parsing. Or, you can combine two InputStreams into one using the SequenceInputStream
+
+------------
+The Java Reader (java.io.Reader) and Java Writer class (java.io.Writer) in Java IO work much like the InputStream and
+OutputStream with the exception that Reader and Writer are character based.
+They are intended for reading and writing text. The InputStream and OutputStream are byte based, remember?
+-----------
+Java NIO ?
+
+-----------
+The Java DataInputStream class, java.io.DataInputStream, enables you to read Java primitives (int, float, long etc.)
+from an InputStream instead of only raw bytes.

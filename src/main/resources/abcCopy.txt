@@ -1,0 +1,12 @@
+llo Wame=Dinesh Seervi
+    Age=27
+    Current city= Jodhpur, Rajasthan
+2.  Name=Rakesh Seervi
+    Age=30
+    Current city= Delhi
+1.  Name=Dinesh Seervi
+    Age=27
+    Current city= Jodhpur, Rajasthan
+2.  Name=Rakesh Seervi
+    Age=30
+    Current city= Delhi

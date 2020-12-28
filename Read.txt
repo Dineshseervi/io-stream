@@ -4,6 +4,9 @@ If you need to read a file from one end to the other you can use a FileInputStre
 
 If you need to jump around the file and read only parts of it from here and there, you can use a RandomAccessFile.
 
+Resource:
+https://www.codejava.net/java-se/networking/how-to-create-a-chat-console-application-in-java-using-socket
+
 ---------
 Buffering can also be applied to OutputStream's thereby batching the writes to disk (or the underlying stream) up in larger chunks. That provides faster output too. This is done with a BufferedOutputStream.
 
@@ -21,3 +24,95 @@ Java NIO ?
 -----------
 The Java DataInputStream class, java.io.DataInputStream, enables you to read Java primitives (int, float, long etc.)
 from an InputStream instead of only raw bytes.
+
+------------
+Netty is a high performance IO toolkit for Java. Netty is open source, so you can use it freely, and even contribute to it if you want to. This Netty tutorial will explain how Netty works, and how to get started with Netty. This tutorial will not cover every single detail of Netty.
+
+Netty Website
+The Netty website address is:
+
+netty.io
+
+Netty Advantages
+In general, Netty makes it a lot easier to build scalable, robust networked applications compared to implemeting the same using standard Java. Netty also contains some OS specific optimizations, like using EPOLL on Linux etc.
+
+Netty Tools
+Netty contains an impressive set of IO tools. Some of these tools are:
+
+HTTP Server
+HTTPS Server
+WebSocket Server
+TCP Server
+UDP Server
+In VM Pipe
+Netty contains more than this, and Netty keeps growing.
+
+Using Netty's IO tools it is easy to start an HTTP server, WebSocket server etc. It takes just a few lines of code.
+
+1. Creating an EventLoopGroup
+The first step in creating a Netty TCP server is to create a Netty EventLoopGroup. Since this example uses Java NIO a NioEventLoopGroup is created. This is the line that creates the EventLoopGroup
+
+
+EventLoopGroup group = new NioEventLoopGroup();
+
+---
+2. Creating a ServerBootStrap
+The next step in creating a Netty TCP server is to create and configure a ServerBootStrap . This is done with these lines:
+
+ServerBootstrap serverBootstrap = new ServerBootstrap();
+serverBootstrap.group(group);
+serverBootstrap.channel(NioServerSocketChannel.class);
+serverBootstrap.localAddress(new InetSocketAddress("localhost", 9999));
+
+**
+First a ServerBootstrap instance is created.
+
+Second the EventLoopGroup is set on the ServerBootstrap instance.
+
+Third, the NioServerSocketChannel class instance is set on the ServerBootstrap instance. This is necessary because the example uses a NioEventLoopGroup.
+
+Fourth, the local IP address / domain + TCP port is set on the ServerBootstrap . This is needed for the Netty TCP server to boot.
+----
+3. Creating a ChannelInitializer
+
+The third step in booting up a Netty TCP server is to create a ChannelInitializer and attach it to the ServerBootstrap instance.
+The ChannelInitializer initializes the sockets of all incoming TCP connections.
+
+serverBootstrap.childHandler(new ChannelInitializer<SocketChannel>() {
+    protected void initChannel(SocketChannel socketChannel) throws Exception {
+        socketChannel.pipeline().addLast(new HelloServerHandler());
+    }
+});
+
+-
+The Netty ChannelInitializer class is an abstract class. Its method initChannel() is called whenever a new incoming TCP connection is accepted by the TCP server.
+As you can see, it attaches a new HelloServerHandler (a ChannelHandler) to each new SocketChannel.
+It is also possible to reuse the same ChannelHandler across all new SocketChannel instances, instead of creating a new every time as is done here
+
+As you can see, the ChannelInitializer is added to the ServerBootstrap using the childHandler() method.
+The reason it is called a "child" handler is that each accepted SocketChannel is considered a "child" of the server socket that accepts it.
+-------
+4. Start the Server
+The final step of booting a Netty TCP server is to start up the server. Starting the TCP server is done with this line:
+
+ChannelFuture channelFuture = serverBootstrap.bind().sync();
+
+The serverBootstrap.bind() method returns a ChannelFuture which can be used to know when the binding of the server (binding to local address and TCP port) is done.
+By calling sync() on the ChannelFuture the main thread that creates the server waits until the server has started, before continuing.
+The sync() method also returns a ChannelFuture, by the way.
+
+----------
+Netty’s asynchronous, non-blocking I/O model is designed for highly scalable architectures and may allow for higher throughput than an analogous blocking model.
+Basically, a non-blocking server runs all requests asynchronously on a single thread (no function should “block” the event loop).
+
+ This contrasts with a blocking server model, which typically runs each request on a separate thread.
+ By never having to switch threads or create new threads as load increases, the non-blocking model allows for reduced overhead and quicker expansion as traffic increases.
+
+Since Netty works at the socket level, it also requires a deeper understanding of the nuts and bolts of things like thread loops,
+byte buffers, and memory management.
+
+Netty is designed to make the implementation of custom network protocols relatively easy. HTTP is great, but its a general-purpose protocol, basically well-suited to most things.
+But if you’re consistently passing custom, structured data back and forth between servers and clients (large files, streaming media, real-time game data, etc…), you can do better. Netty allows you to write your own network protocol tailored to your specific requirements, optimizing the traffic flow for your specific situation, without
+
+https://netty.io/wiki/user-guide-for-4.x.html
+
